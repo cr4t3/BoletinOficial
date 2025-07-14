@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOLETÍN OFICIAL DE LA REPUBLICA ARGENTINA - {{ data.title }} - {{data.number}}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .custom-blue { background-color: #1e3a8a; }
+        .custom-teal { background-color: #134e4a; }
+        .custom-light-blue { background-color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="custom-blue text-white">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                    <div class="text-blue-800 font-bold text-lg">🇦🇷</div>
+                </div>
+                <div class="text-sm">
+                    <div class="font-medium">Presidencia de la Nación</div>
+                    <div class="text-blue-200">República Argentina</div>
+                </div>
+            </div>
+            <div class="custom-teal px-4 py-2 text-center">
+                <div class="font-medium">Boletín Oficial de la</div>
+                <div class="font-medium">República Argentina</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="custom-blue text-white">
+        <div class="flex space-x-8 px-4 py-3">
+            <a href="#" class="hover:text-blue-200 font-medium">INSTITUCIONAL</a>
+            <a href="#" class="hover:text-blue-200 font-medium">PRODUCTOS Y SERVICIOS</a>
+            <a href="#" class="hover:text-blue-200 font-medium">PREGUNTAS FRECUENTES</a>
+            <a href="#" class="hover:text-blue-200 font-medium">CONTACTO</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-6 flex gap-6">
+        <!-- Main Content -->
+        <div class="flex-1">
+            <!-- Back Button -->
+            <div class="mb-4">
+                <a href="/" class="text-blue-600 hover:text-blue-800 flex items-center">
+                    <i class="fas fa-chevron-left mr-2"></i>
+                    Volver
+                </a>
+            </div>
+
+            <!-- Title Section -->
+            <div class="flex items-center justify-between mb-6">
+    <h1 class="text-3xl font-bold text-blue-800">Legislación y Avisos Oficiales</h1>
+
+    <div class="flex flex-col items-center gap-2">
+        <button onclick="downloadText()" class="w-12 h-12 custom-blue rounded-full flex items-center justify-center hover:bg-blue-900 transition-colors">
+            <i class="fas fa-download text-white text-lg"></i>
+        </button>
+        <button onclick="printText()" class="flex items-center justify-center">
+            <i class="fas fa-print text-blue-800 text-lg"></i>
+        </button>
+    </div>
+</div>
+
+
+            <!-- Main Content -->
+            <div>
+                <!-- Section Title -->
+                <h2 class="text-xl font-bold text-gray-800 mb-6">{{ data.title }}</h2>
+
+                <!-- Decree Header -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">{{ data.type.singular|capitalize() }} {{ data.identifier }}</h3>
+                    <p class="text-sm text-gray-600 mb-4">{{ data.description }}</p>
+                </div>
+
+                <!-- Text Content -->
+                <div class="space-y-4 text-sm text-gray-700 leading-relaxed">
+                    <div class="whitespace-pre-line">{{ data.text }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="w-80">
+            <!-- Calendar -->
+            <div class="bg-white rounded-lg shadow-sm p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="font-bold text-gray-800">Ediciones Anteriores</div>
+                </div>
+                <div class="flex items-center justify-between mb-4">
+                    <button onclick="changeMonth(-1)" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="font-medium text-gray-800" id="monthYear">{{ calendar_month }} {{ calendar_year }}</div>
+                    <button onclick="changeMonth(1)" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Calendar Grid -->
+                <div class="grid grid-cols-7 gap-1 text-center text-sm">
+                    <div class="font-medium text-gray-600 py-1">Do</div>
+                    <div class="font-medium text-gray-600 py-1">Lu</div>
+                    <div class="font-medium text-gray-600 py-1">Ma</div>
+                    <div class="font-medium text-gray-600 py-1">Mi</div>
+                    <div class="font-medium text-gray-600 py-1">Ju</div>
+                    <div class="font-medium text-gray-600 py-1">Vi</div>
+                    <div class="font-medium text-gray-600 py-1">Sa</div>
+                    
+                    <div id="calendarGrid" class="contents">
+                        <!-- Calendar days will be populated by JavaScript -->
+                    </div>
+                </div>
+    </div>
+    <script>
+        let currentMonth = {{ calendar_month }};
+        let currentYear = {{ calendar_year }};
+        const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        const currentDate = {{ current_day }};
+        const currentMonthActual = {{ current_month }};
+        const currentYearActual = {{ current_year }};
+        changeMonth(0);
+
+        function generateCalendar() {
+            const firstDay = new Date(currentYear, currentMonth - 1, 1);
+            const lastDay = new Date(currentYear, currentMonth, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+            
+            // Previous month's trailing days
+            const prevMonth = new Date(currentYear, currentMonth - 1, 0);
+            const prevMonthDays = prevMonth.getDate();
+            
+            for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+                const dayDiv = document.createElement('div');
+                dayDiv.textContent = prevMonthDays - i;
+                dayDiv.className = 'text-gray-400 py-1';
+                calendarGrid.appendChild(dayDiv);
+            }
+            
+            // Current month's days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.textContent = day;
+                dayDiv.className = 'py-1 cursor-pointer hover:bg-blue-100 rounded';
+                
+                // Highlight current date if it's the current month and year
+                if (day === currentDate && currentMonth === currentMonthActual && currentYear === currentYearActual) {
+                    dayDiv.className += ' bg-blue-800 text-white';
+                }
+                
+                // Add click event to navigate to date with new URL format
+                dayDiv.addEventListener('click', function() {
+                    const dateStr = String(day).padStart(2, '0') + '-' + 
+                                   String(currentMonth).padStart(2, '0') + '-' + 
+                                   String(currentYear);
+                    window.location.href = '/update/' + dateStr;
+                });
+                
+                calendarGrid.appendChild(dayDiv);
+            }
+            
+            // Next month's leading days
+            const totalCells = calendarGrid.children.length;
+            const remainingCells = 42 - totalCells; // 6 rows * 7 days
+            
+            for (let day = 1; day <= remainingCells && day <= 14; day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.textContent = day;
+                dayDiv.className = 'text-gray-400 py-1';
+                calendarGrid.appendChild(dayDiv);
+            }
+        }
+        
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth > 12) {
+                currentMonth = 1;
+                currentYear++;
+            } else if (currentMonth < 1) {
+                currentMonth = 12;
+                currentYear--;
+            }
+            
+            document.getElementById('monthYear').textContent = monthNames[currentMonth - 1] + ' ' + currentYear;
+            generateCalendar();
+        }
+        
+        
+        // Initialize calendar on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            generateCalendar();
+        });
+    </script>
+</body>
