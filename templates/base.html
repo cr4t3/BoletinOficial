@@ -92,47 +92,60 @@
             const lastDay = new Date(currentYear, currentMonth, 0);
             const daysInMonth = lastDay.getDate();
             const startingDayOfWeek = firstDay.getDay();
-            
+
             const calendarGrid = document.getElementById('calendarGrid');
             calendarGrid.innerHTML = '';
-            
+
             // Previous month's trailing days
             const prevMonth = new Date(currentYear, currentMonth - 1, 0);
             const prevMonthDays = prevMonth.getDate();
-            
+
             for (let i = startingDayOfWeek - 1; i >= 0; i--) {
                 const dayDiv = document.createElement('div');
                 dayDiv.textContent = prevMonthDays - i;
                 dayDiv.className = 'text-gray-400 py-1';
                 calendarGrid.appendChild(dayDiv);
             }
-            
-            // Current month's days
+
+            // Days of the current month
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayDiv = document.createElement('div');
                 dayDiv.textContent = day;
-                dayDiv.className = 'py-1 cursor-pointer hover:bg-blue-100 rounded';
-                
-                // Highlight current date if it's the current month and year
-                if (day === currentDate && currentMonth === currentMonthActual && currentYear === currentYearActual) {
-                    dayDiv.className += ' bg-blue-800 text-white';
+
+                // Create a date object for the current calendar day
+                const dayDate = new Date(currentYear, currentMonth - 1, day);
+                // Create a date object for today and minDate
+                const today = new Date(currentYearActual, currentMonthActual - 1, currentDate);
+                const minDate = new Date(currentYearActual, currentMonthActual - 1, 14); // Minimum date for clickable days
+
+                if (dayDate > today || dayDate < minDate) {
+                    // Future day: make it gray and remove pointer cursor to indicate no click
+                    dayDiv.className = 'text-gray-400 py-1';
+                } else if (day === currentDate && currentMonth === currentMonthActual && currentYear === currentYearActual) {
+                    // Current day: highlight with blue background and white text
+                    dayDiv.className = 'py-1 cursor-pointer hover:bg-blue-100 rounded bg-blue-800 text-white';
+                } else {
+                    // Past or current month days: normal clickable style
+                    dayDiv.className = 'py-1 cursor-pointer hover:bg-blue-100 rounded';
                 }
-                
-                // Add click event to navigate to date with new URL format
-                dayDiv.addEventListener('click', function() {
-                    const dateStr = String(day).padStart(2, '0') + '-' + 
-                                   String(currentMonth).padStart(2, '0') + '-' + 
-                                   String(currentYear);
-                    window.location.href = '/update/' + dateStr;
-                });
+
+                // Add click event only if the day is not in the future
+                if (dayDate <= today && dayDate >= minDate) {
+                    dayDiv.addEventListener('click', function() {
+                        const dateStr = String(day).padStart(2, '0') + '-' + 
+                                    String(currentMonth).padStart(2, '0') + '-' + 
+                                    String(currentYear);
+                        window.location.href = '/update/' + dateStr;
+                    });
+                }
                 
                 calendarGrid.appendChild(dayDiv);
             }
-            
-            // Next month's leading days
+
+            // Next month's leading days to fill the grid
             const totalCells = calendarGrid.children.length;
             const remainingCells = 42 - totalCells; // 6 rows * 7 days
-            
+
             for (let day = 1; day <= remainingCells && day <= 14; day++) {
                 const dayDiv = document.createElement('div');
                 dayDiv.textContent = day;
@@ -140,6 +153,7 @@
                 calendarGrid.appendChild(dayDiv);
             }
         }
+
         
         function changeMonth(direction) {
             currentMonth += direction;
