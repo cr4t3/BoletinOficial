@@ -153,55 +153,7 @@
             
             document.getElementById('monthYear').textContent = monthNames[currentMonth - 1] + ' ' + currentYear;
             generateCalendar();
-        }
-        
-        function downloadAll() {
-            // Create content for download
-            let content = 'BOLETÍN OFICIAL DE LA REPÚBLICA\n';
-            content += '='.repeat(50) + '\n\n';
-            content += 'Fecha: {{ current_date }}\n\n';
-            
-            // Add Decretos
-            content += 'DECRETOS\n';
-            content += '-'.repeat(20) + '\n';
-            {% for decreto in decretos %}
-            content += '{{ decreto.title }}\n';
-            content += 'Decreto {{ decreto.number }}\n';
-            content += '{{ decreto.description }}\n\n';
-            {% endfor %}
-            
-            // Add Resoluciones
-            content += 'RESOLUCIONES\n';
-            content += '-'.repeat(20) + '\n';
-            {% for resolucion in resoluciones %}
-            content += '{{ resolucion.title }}\n';
-            content += 'Resolución {{ resolucion.number }}\n';
-            content += '{{ resolucion.description }}\n\n';
-            {% endfor %}
-            
-            // Add Avisos if they exist
-            {% if avisos %}
-            content += 'AVISOS\n';
-            content += '-'.repeat(20) + '\n';
-            {% for aviso in avisos %}
-            content += '{{ aviso.title }}\n';
-            content += '{{ aviso.type }} {{ aviso.number }}\n';
-            content += '{{ aviso.description }}\n\n';
-            {% endfor %}
-            {% endif %}
-            
-            // Create and trigger download
-            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'boletin_oficial_{{ current_date_filename }}.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }
-        
+        }        
         // Initialize calendar on page load
         document.addEventListener('DOMContentLoaded', function() {
             generateCalendar();
