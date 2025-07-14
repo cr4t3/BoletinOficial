@@ -42,7 +42,7 @@ EXPIRATION_TIME = 3600  # 1 hour expiration time
 
 @app.before_request
 def before_request():
-    if request.path == '/login' or request.path == '/admin':
+    if request.path == '/login' or request.path.startswith('/admin'):
         return
 
     token = request.cookies.get('access_token')
@@ -78,6 +78,15 @@ def before_request():
         res.set_cookie('access_token', token, max_age=EXPIRATION_TIME)
         return res
 
+@app.before_request
+def check_admin():
+    if request.path.startswith('/admin'):
+        token = request.cookies.get('admin_token')
+        if not token or token not in admin_storage or not admin_storage[token][0]:
+            res = make_response(redirect('/login'))
+            res.set_cookie('admin_token', '', expires=0)  # Clear the admin token
+            return res
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -99,13 +108,20 @@ def login():
             return redirect('/admin')
         return render_template('login.html')
 
-@app.route('/admin', methods=['GET', 'POST'])
-def admin():
+@app.route('/admin', methods=['GET'])
+def admin_dashboard():
+    if request.cookies.get('admin_token') not in admin_storage or not admin_storage[request.cookies.get('admin_token')][0]:
+        return redirect('/login')
+    
+    return render_template('admin.html')
+
+@app.route('/admin/create', methods=['GET', 'POST'])
+def admin_create():
     if request.cookies.get('admin_token') not in admin_storage or not admin_storage[request.cookies.get('admin_token')][0]:
         return redirect('/login')
     
     if request.method == 'GET':
-        return render_template('admin.html', types=Type.query.all(), items=Item.query.all())
+        return render_template('admin_create.html', types=Type.query.all(), items=Item.query.all())
     
     if request.method == 'POST':
         title = request.form.get('title')
@@ -118,13 +134,31 @@ def admin():
         type_id = Type.query.filter_by(singular=type).first().id if type else None
 
         if None in [title, type, text, description, identifier]:
-            return render_template('admin.html', error="Todos los campos son obligatorios", types=Type.query.all(), items=Item.query.all())
+            return render_template('admin_create.html', types=Type.query.all(), items=Item.query.all())
         
         new_item = Item(title=title, description=description, date=date, text=text, type_id=type_id, identifier=identifier)
         db.session.add(new_item)
         db.session.commit()
 
-        return redirect('/admin')
+        return redirect('/admin/create')
+
+@app.route('/admin/delete', methods=['GET', 'POST'])
+def admin_delete():
+    if request.cookies.get('admin_token') not in admin_storage or not admin_storage[request.cookies.get('admin_token')][0]:
+        return redirect('/login')
+    
+    if request.method == 'GET':
+        return render_template('admin_delete.html', items=Item.query.all())
+    
+    if request.method == 'POST':
+        item_id = request.form.get('item_id')
+        item = Item.query.filter_by(id=item_id).first()
+        
+        if item:
+            db.session.delete(item)
+            db.session.commit()
+        
+        return redirect('/admin/delete')
 
 @app.route('/', methods=['GET'])
 def home():

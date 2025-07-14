@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard | Create Document</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Dashboard de Documentos</h1>
+
+    <!-- FORMULARIO CREAR DOCUMENTO -->
+    <section class="bg-white p-6 rounded shadow mb-10">
+      <h2 class="text-xl font-semibold mb-4">Crear Nuevo Documento</h2>
+      <form action="/admin/create" method="POST" class="space-y-4">
+        <div>
+          <label for="title" class="block font-medium mb-1">Título</label>
+          <input type="text" name="title" id="title" required
+            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label for="description" class="block font-medium mb-1">Descripción</label>
+          <input type="text" name="description" id="description" required
+            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label for="identifier" class="block font-medium mb-1">Identificador</label>
+          <input type="text" name="identifier" id="identifier" required
+            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label for="text" class="block font-medium mb-1">Texto</label>
+          <textarea name="text" id="text" rows="4" required
+            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+        <div>
+          <label for="type" class="block font-medium mb-1">Tipo</label>
+          <select name="type" id="type" required
+            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="" disabled selected>-- Selecciona un tipo --</option>
+            {% for type in types %}
+                <option value="{{type.singular}}">{{type.singular|capitalize()}}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit"
+          class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">Crear Documento</button>
+      </form>
+    </section>
+  </div>
+</body>
+</html>

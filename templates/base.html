@@ -114,11 +114,11 @@
 
                 // Create a date object for the current calendar day
                 const dayDate = new Date(currentYear, currentMonth - 1, day);
-                // Create a date object for today and minDate
-                const today = new Date(currentYearActual, currentMonthActual - 1, currentDate);
+                // Create a date object for maxDate and minDate
+                const maxDate = new Date(currentYearActual, currentMonthActual - 1, currentDate);
                 const minDate = new Date(currentYearActual, currentMonthActual - 1, 14); // Minimum date for clickable days
 
-                if (dayDate > today || dayDate < minDate) {
+                if (dayDate > maxDate || dayDate < minDate) {
                     // Future day: make it gray and remove pointer cursor to indicate no click
                     dayDiv.className = 'text-gray-400 py-1';
                 } else if (day === currentDate && currentMonth === currentMonthActual && currentYear === currentYearActual) {
@@ -130,7 +130,7 @@
                 }
 
                 // Add click event only if the day is not in the future
-                if (dayDate <= today && dayDate >= minDate) {
+                if (dayDate <= maxDate && dayDate >= minDate) {
                     dayDiv.addEventListener('click', function() {
                         const dateStr = String(day).padStart(2, '0') + '-' + 
                                     String(currentMonth).padStart(2, '0') + '-' + 
