@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOLETÍN OFICIAL DE LA REPUBLICA</title>
+    <title>OFFICIAL BULLETIN OF <!--[COUNTRY NAME]--></title>
     <script src="/static/tailwindcss.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -18,15 +18,15 @@
         <div class="flex items-center justify-between px-4 py-3">
             <div class="flex items-center space-x-4">
                 <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                    <div class="text-blue-800 font-bold text-lg">🇦🇷</div>
+                    <div class="text-blue-800 font-bold text-lg">🏁</div>
                 </div>
                 <div class="text-sm">
-                    <div class="font-medium">Presidencia de la Nación</div>
+                    <div class="font-medium">Presidency of the Nation</div>
                     <!--<div class="text-blue-200">[COUNTRY NAME]</div>-->
                 </div>
             </div>
             <div class="custom-teal px-4 py-2 text-center">
-                <div class="font-medium">Boletín Oficial de la</div>
+                <div class="font-medium">Official Bulletin of</div>
                 <!--<div class="font-medium">[COUNTRY NAME]</div>-->
             </div>
         </div>
@@ -42,7 +42,7 @@
             <!-- Calendar -->
             <div class="bg-white rounded-lg shadow-sm p-4">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="font-bold text-gray-800">Ediciones Anteriores</div>
+                    <div class="font-bold text-gray-800">Older Editions</div>
                 </div>
                 <div class="flex items-center justify-between mb-4">
                     <button onclick="changeMonth(-1)" class="text-gray-400 hover:text-gray-600">
@@ -56,12 +56,12 @@
                 
                 <!-- Calendar Grid -->
                 <div class="grid grid-cols-7 gap-1 text-center text-sm">
-                    <div class="font-medium text-gray-600 py-1">Do</div>
-                    <div class="font-medium text-gray-600 py-1">Lu</div>
-                    <div class="font-medium text-gray-600 py-1">Ma</div>
-                    <div class="font-medium text-gray-600 py-1">Mi</div>
-                    <div class="font-medium text-gray-600 py-1">Ju</div>
-                    <div class="font-medium text-gray-600 py-1">Vi</div>
+                    <div class="font-medium text-gray-600 py-1">Su</div>
+                    <div class="font-medium text-gray-600 py-1">Mo</div>
+                    <div class="font-medium text-gray-600 py-1">Tu</div>
+                    <div class="font-medium text-gray-600 py-1">We</div>
+                    <div class="font-medium text-gray-600 py-1">Th</div>
+                    <div class="font-medium text-gray-600 py-1">Fr</div>
                     <div class="font-medium text-gray-600 py-1">Sa</div>
                     
                     <div id="calendarGrid" class="contents">
@@ -80,8 +80,8 @@
     <script>
         let currentMonth = {{ calendar_month }};
         let currentYear = {{ calendar_year }};
-        const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
-                           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                    'July', 'August', 'September', 'October', 'November', 'December'];
         const currentDate = {{ current_day }};
         const currentMonthActual = {{ current_month }};
         const currentYearActual = {{ current_year }};

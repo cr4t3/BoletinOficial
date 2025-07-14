@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Dashboard | Eliminar Documentos</title>
+  <title>Admin Panel | Delete documents</title>
   <script src="/static/tailwindcss.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-6">
   <div class="max-w-7xl mx-auto">
-    <h1 class="text-3xl font-bold mb-6">Eliminar Documentos</h1>
+    <h1 class="text-3xl font-bold mb-6">Delete Documents</h1>
 
-    <!-- LISTA DE DOCUMENTOS -->
+    <!-- DOCUMENTS LIST -->
     <section class="bg-white p-6 rounded shadow">
-      <h2 class="text-xl font-semibold mb-4">Documentos Registrados</h2>
+      <h2 class="text-xl font-semibold mb-4">Registered Documents</h2>
 
       {% if items %}
         <ul class="divide-y divide-gray-200">
@@ -21,14 +21,14 @@
             <div>
               <p class="text-lg font-medium text-gray-800">{{ item.title }}</p>
               <p class="text-sm text-gray-500">
-                Identificador: {{ item.identifier }} | Tipo: {{ item.type.singular|capitalize }} | Fecha: {{ item.date }}
+                Identifier: {{ item.identifier }} | Type: {{ item.type.singular|capitalize }} | Date: {{ item.date }}
               </p>
             </div>
             <form action="/admin/delete" method="POST">
             <input type="hidden" name="item_id" value="{{ item.id }}">
                 <button type="submit" 
                     class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                    onclick="return confirm('¿Seguro que querés eliminar &quot;{{ item.title }}&quot;?');">
+                    onclick="return confirm('Are you sure you want to delete &quot;{{ item.title }}&quot;?');">
                     Eliminar
                 </button>
             </form>
@@ -36,7 +36,7 @@
           {% endfor %}
         </ul>
       {% else %}
-        <p class="text-gray-600">No hay documentos disponibles para eliminar.</p>
+        <p class="text-gray-600">There are no available docuemnts to delete.</p>
       {% endif %}
     </section>
   </div>
