@@ -37,10 +37,14 @@ class Item(db.Model):
 #endregion
 
 token_storage = {}
+admin_storage = {}
 EXPIRATION_TIME = 3600  # 1 hour expiration time
 
 @app.before_request
 def before_request():
+    if request.path == '/login' or request.path == '/admin':
+        return
+
     token = request.cookies.get('access_token')
     
     if not token:
@@ -74,13 +78,59 @@ def before_request():
         res.set_cookie('access_token', token, max_age=EXPIRATION_TIME)
         return res
 
-@app.route('/')
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if username == os.getenv('ADMIN_USERNAME') and password == os.getenv('ADMIN_PASSWORD'):
+            token = str(uuid.uuid4())
+            admin_storage[token] = (True, time.time())
+            
+            res = make_response(redirect('/admin'))
+            res.set_cookie('admin_token', token, max_age=EXPIRATION_TIME)
+            return res
+        else:
+            return render_template('login.html')
+
+    if request.method == 'GET':
+        if request.cookies.get('admin_token') in admin_storage and admin_storage[request.cookies.get('admin_token')][0]:
+            return redirect('/admin')
+        return render_template('login.html')
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    if request.cookies.get('admin_token') not in admin_storage or not admin_storage[request.cookies.get('admin_token')][0]:
+        return redirect('/login')
+    
+    if request.method == 'GET':
+        return render_template('admin.html', types=Type.query.all(), items=Item.query.all())
+    
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        date = datetime.datetime.now()
+        type = request.form.get('type')
+        text = request.form.get('text')
+        identifier = request.form.get('identifier')
+
+        type_id = Type.query.filter_by(singular=type).first().id if type else None
+
+        if None in [title, type, text, description, identifier]:
+            return render_template('admin.html', error="Todos los campos son obligatorios", types=Type.query.all(), items=Item.query.all())
+        
+        new_item = Item(title=title, description=description, date=date, text=text, type_id=type_id, identifier=identifier)
+        db.session.add(new_item)
+        db.session.commit()
+
+        return redirect('/admin')
+
+@app.route('/', methods=['GET'])
 def home():
     token = request.cookies.get('access_token')
 
     date = datetime.datetime.now() if not token else datetime.datetime.strptime(token_storage.get(token, (datetime.datetime.now().strftime("%d-%m-%Y"), time.time()))[0], "%d-%m-%Y")
-
-    print(Type.query.all())
 
     return render_template('index.html', 
                            current_year=date.year, 
@@ -91,7 +141,7 @@ def home():
                            items=Item.query.filter_by(date=date.date()).all(),
                            types=Type.query.all())
 
-@app.route('/text/<id>')
+@app.route('/text/<id>', methods=['GET'])
 def text(id):
     if not id:
         return abort(404)
@@ -114,9 +164,9 @@ def text(id):
                            data=item
                            )
 
-@app.route('/update/<date>')
+@app.route('/update/<date>', methods=['GET'])
 def update_date(date):
-    token = str(uuid.uuid4())
+    token = request.cookies.get('access_token')
     token_storage[token] = (date, time.time())
 
     res = make_response(redirect("/"))
