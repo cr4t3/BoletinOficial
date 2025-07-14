@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOLETÍN OFICIAL DE LA REPUBLICA ARGENTINA</title>
+    <title>BOLETÍN OFICIAL DE LA REPUBLICA</title>
     <script src="/static/tailwindcss.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -22,12 +22,12 @@
                 </div>
                 <div class="text-sm">
                     <div class="font-medium">Presidencia de la Nación</div>
-                    <div class="text-blue-200">República Argentina</div>
+                    <!--<div class="text-blue-200">[COUNTRY NAME]</div>-->
                 </div>
             </div>
             <div class="custom-teal px-4 py-2 text-center">
                 <div class="font-medium">Boletín Oficial de la</div>
-                <div class="font-medium">República Argentina</div>
+                <!--<div class="font-medium">[COUNTRY NAME]</div>-->
             </div>
         </div>
     </header>
@@ -157,7 +157,7 @@
         
         function downloadAll() {
             // Create content for download
-            let content = 'BOLETÍN OFICIAL DE LA REPÚBLICA ARGENTINA\n';
+            let content = 'BOLETÍN OFICIAL DE LA REPÚBLICA\n';
             content += '='.repeat(50) + '\n\n';
             content += 'Fecha: {{ current_date }}\n\n';
             
