@@ -34,7 +34,7 @@ A simplified, self-hosted clone of Argentina's *Boletín Oficial* built with Fla
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/yourusername/BoletinOficial.git
+git clone https://github.com/cr4t3/BoletinOficial.git
 cd BoletinOficial
 ```
 
